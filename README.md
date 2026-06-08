@@ -2,6 +2,52 @@
 
 **DocuQuery AI** is an intelligent Document Analysis and Comparison application. The core functionality includes uploading documents, intelligently parsing them with AI, querying/chatting with them, and running advanced algorithmic comparisons. Built on a powerful modern tech stack, it utilizes **Python and FastAPI** for the backend, **LlamaIndex and HuggingFace** for local LLMs and Vector Embeddings, and a beautiful **Vanilla HTML/CSS/JS Glassmorphism** frontend.
 
+## Screenshots
+
+<p align="center">
+  <img src="images/Screenshot%202026-06-08%20152152.png" width="800" alt="DocuQuery Screenshot 1">
+</p>
+<p align="center">
+  <img src="images/Screenshot%202026-06-08%20152200.png" width="800" alt="DocuQuery Screenshot 2">
+</p>
+<p align="center">
+  <img src="images/Screenshot%202026-06-08%20152213.png" width="800" alt="DocuQuery Screenshot 3">
+</p>
+
+## System Architecture
+
+```mermaid
+graph TD
+    %% User Interaction
+    User([User / Browser]) -->|Uploads Document| UI
+    User -->|Queries / Compares| UI
+
+    %% Frontend
+    subgraph Frontend
+        UI[Glassmorphism UI<br/>Vanilla JS / CSS Grid]
+    end
+
+    %% Backend Services
+    subgraph Backend [FastAPI Backend]
+        UI -->|REST API Calls| API[FastAPI Routing]
+        
+        API -->|Extract| Ext[Extraction Service<br/>OCR & Parsers]
+        API -->|Analyze| DocSvc[Document Service]
+        
+        Ext -->|Raw Text| DocSvc
+    end
+
+    %% AI Models & Indexing
+    subgraph AI [Local AI Engine]
+        DocSvc -->|Create Embeddings| LlamaIdx[LlamaIndex]
+        
+        LlamaIdx -->|Vectorization| BGE[BAAI/bge-small-en<br/>Embedding Model]
+        LlamaIdx -->|Q&A Inference| LLM[Qwen2.5-1.5B<br/>Instruct LLM]
+        
+        LlamaIdx -->|Stores Nodes| InMemory[(In-Memory<br/>Vector Index)]
+    end
+```
+
 ## Features
 
 - **Document Parsing:** Upload images (PNG/JPG), PDFs, Word Documents, and Excel spreadsheets.
