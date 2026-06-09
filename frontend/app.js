@@ -10,11 +10,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const loadingOverlay   = document.getElementById('loadingOverlay');
     const loadingText      = document.getElementById('loadingText');
     const resetFileBtn     = document.getElementById('resetFileBtn');
-    
-    const splitPreviewImg        = document.getElementById('splitPreviewImg');
-    const splitImagePreview      = document.getElementById('splitImagePreview');
-    const splitFileIconPreview   = document.getElementById('splitFileIconPreview');
-    const splitPlaceholderText   = document.getElementById('splitPlaceholderText');
 
     const extractedTextEl  = document.getElementById('extractedText');
     const textPlaceholder  = document.getElementById('textPlaceholder');
@@ -118,12 +113,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 previewImg.src = e.target.result;
                 previewImg.classList.remove('hidden');
                 fileIconPreview.classList.add('hidden');
-                
-                // Set split screen preview
-                splitPreviewImg.src = e.target.result;
-                splitImagePreview.classList.remove('hidden');
-                splitFileIconPreview.classList.add('hidden');
-                splitPlaceholderText.classList.add('hidden');
             };
             reader.readAsDataURL(file);
         } else {
@@ -134,12 +123,6 @@ document.addEventListener('DOMContentLoaded', () => {
             else if (file.name.endsWith('.doc') || file.name.endsWith('.docx'))   icon = 'fa-file-word';
             else if (file.name.endsWith('.xls') || file.name.endsWith('.xlsx'))   icon = 'fa-file-excel';
             fileIconPreview.innerHTML = `<i class="fa-solid ${icon}"></i>`;
-            
-            // Set split screen preview
-            splitImagePreview.classList.add('hidden');
-            splitFileIconPreview.classList.remove('hidden');
-            splitFileIconPreview.innerHTML = `<i class="fa-solid ${icon}"></i>`;
-            splitPlaceholderText.classList.add('hidden');
         }
     }
 
@@ -157,10 +140,6 @@ document.addEventListener('DOMContentLoaded', () => {
             textPlaceholder.classList.remove('hidden');
             extractedTextEl.classList.add('hidden');
             saveTextBtn.classList.add('hidden');
-            
-            splitImagePreview.classList.add('hidden');
-            splitFileIconPreview.classList.add('hidden');
-            splitPlaceholderText.classList.remove('hidden');
 
             const compareExtText = document.getElementById('compareExtractedText');
             if (compareExtText) compareExtText.innerHTML = '<p style="color:var(--text-muted); font-size: 0.8rem;">Upload a document to extract text.</p>';
@@ -191,6 +170,12 @@ document.addEventListener('DOMContentLoaded', () => {
         document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
         document.querySelector('[data-target="text-result"]').classList.add('active');
         document.getElementById('text-result').classList.add('active');
+
+        // Unhide the query section below the upload area
+        const querySection = document.getElementById('querySection');
+        if (querySection) {
+            querySection.style.display = 'block';
+        }
 
         const text = data.text || data.extracted_text || '';
         if (text) {
@@ -246,7 +231,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         msgDiv.innerHTML = `
             ${avatarHTML}
-            <div class="msg-bubble" style="${bubbleStyle}">${text}</div>
+            <div class="msg-bubble" style="${bubbleStyle} white-space: pre-wrap;">${text}</div>
         `;
         chatMessages.appendChild(msgDiv);
         chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -274,6 +259,46 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
     chatInput.addEventListener('keydown', e => { if (e.key === 'Enter') sendChatBtn.click(); });
+
+    // ── Direct Query / Search ─────────────────────────────────────────────────
+    const queryBtn = document.getElementById('queryBtn');
+    const queryInput = document.getElementById('queryInput');
+    const queryResult = document.getElementById('queryResult');
+
+    if (queryBtn && queryInput && queryResult) {
+        queryBtn.addEventListener('click', async () => {
+            const q = queryInput.value.trim();
+            if (!q) return;
+            
+            queryResult.innerHTML = '<p><i class="fa-solid fa-spinner fa-spin"></i> Searching...</p>';
+            queryResult.classList.remove('hidden');
+
+            try {
+                let finalQuery = q;
+                // If the user inputs a comma-separated list of fields, instruct the AI to extract all of them
+                if (q.includes(',') && !q.includes('?')) {
+                    finalQuery = `Please extract the following specific details from the document and present them as a bulleted list:\n${q}`;
+                }
+
+                const data = await apiFetch(`${API}/api/chat`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ query: finalQuery })
+                });
+                const answer = data.status === 'success' ? data.response : (data.message || 'No response.');
+                
+                queryResult.innerHTML = `<p style="white-space: pre-wrap;"><strong>Result:</strong><br/>${answer}</p>`;
+                
+                // Also append to the chat tab to keep history sync
+                appendMessage(q, true);
+                appendMessage(answer, false);
+            } catch (err) {
+                queryResult.innerHTML = `<p style="color:var(--danger)">Error: ${err.message}</p>`;
+            }
+        });
+
+        queryInput.addEventListener('keydown', e => { if (e.key === 'Enter') queryBtn.click(); });
+    }
 
     // ── Compare ───────────────────────────────────────────────────────────────
     compareBtn.addEventListener('click', async () => {

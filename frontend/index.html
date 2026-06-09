@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Graph OCR</title>
     <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="style.css?v=2">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
 </head>
@@ -71,35 +71,21 @@
                 </div>
 
                 <div class="tab-content active" id="text-result">
-                    <div class="split-screen-container">
-                        <!-- Left side: Image Preview -->
-                        <div class="split-pane">
-                            <h3 class="pane-title"><i class="fa-solid fa-image"></i> Document Image</h3>
-                            <div class="pane-content preview-pane">
-                                <div id="splitImagePreview" class="hidden">
-                                    <img id="splitPreviewImg" src="" alt="Document Preview" style="max-width: 100%; border-radius: 0.5rem; display: block; margin: auto;">
-                                </div>
-                                <div id="splitFileIconPreview" class="hidden" style="text-align: center; color: var(--accent); font-size: 4rem; padding: 2rem;">
-                                </div>
-                                <p id="splitPlaceholderText" class="text-muted" style="text-align: center; padding: 2rem;">No document loaded.</p>
-                            </div>
+                    <div class="text-container" style="display: flex; flex-direction: column; height: 100%;">
+                        <div class="chat-header" style="padding-bottom: 0.5rem; margin-bottom: 1rem; border-bottom: 1px solid var(--border); display: flex; align-items: center;">
+                            <h3 style="margin:0; font-size: 1rem; color: var(--accent);"><i class="fa-solid fa-pen-to-square"></i> Extracted OCR Text</h3>
+                            <span style="font-size:0.75rem; color:var(--text-muted); font-weight:normal; margin-left:auto;">Review and fix any OCR typos below.</span>
                         </div>
-                        
-                        <!-- Right side: OCR Editor -->
-                        <div class="split-pane">
-                            <h3 class="pane-title"><i class="fa-solid fa-pen-to-square"></i> Extracted OCR Text</h3>
-                            <p class="helper-text" style="margin-bottom:0.5rem;">Review and fix any OCR typos below.</p>
-                            <div class="pane-content editor-pane">
-                                <div id="textPlaceholder" class="placeholder-text">
-                                    <i class="fa-solid fa-file-signature"></i>
-                                    <p>Raw text will appear here.</p>
-                                </div>
-                                <textarea id="extractedText" class="hidden" placeholder="Extracted text..." style="width:100%; height:100%; background:transparent; border:none; color:var(--text); font-family:'Space Mono', monospace; font-size:0.85rem; resize:none; outline:none;"></textarea>
+                        <div style="flex: 1; display: flex; flex-direction: column; position: relative; min-height: 500px;">
+                            <div id="textPlaceholder" class="placeholder-text">
+                                <i class="fa-solid fa-file-signature"></i>
+                                <p>Raw text will appear here.</p>
                             </div>
-                            <div style="display:flex; justify-content:flex-end; padding-top:0.5rem;">
-                                <button id="saveTextBtn" class="btn accent-btn hidden"><i class="fa-solid fa-save"></i> Save Changes</button>
-                                <span id="saveStatus" style="color:var(--success); font-size:0.8rem; margin-left:1rem; align-self:center; opacity:0; transition:opacity 0.3s;">Saved!</span>
-                            </div>
+                            <textarea id="extractedText" class="hidden" placeholder="Extracted text..." style="width:100%; height:100%; flex: 1; background:transparent; border:none; color:var(--text); font-family:'Space Mono', monospace; font-size:0.85rem; resize:none; outline:none;"></textarea>
+                        </div>
+                        <div style="display:flex; justify-content:flex-end; padding-top:0.5rem;">
+                            <button id="saveTextBtn" class="btn accent-btn hidden"><i class="fa-solid fa-save"></i> Save Changes</button>
+                            <span id="saveStatus" style="color:var(--success); font-size:0.8rem; margin-left:1rem; align-self:center; opacity:0; transition:opacity 0.3s;">Saved!</span>
                         </div>
                     </div>
                 </div>

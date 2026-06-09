@@ -376,7 +376,7 @@ body {
     color: var(--text);
     font-size: 0.88rem;
     font-family: 'Space Mono', monospace;
-    max-height: 400px;
+    max-height: 800px;
     overflow-y: auto;
 }
 
@@ -647,11 +647,6 @@ body {
     gap: 1.5rem;
     height: 100%;
 }
-@media (min-width: 900px) {
-    .split-screen-container {
-        grid-template-columns: 1fr 1.3fr;
-    }
-}
 .split-pane {
     background: rgba(0,0,0,0.2);
     border: 1px solid var(--border);
@@ -686,6 +681,9 @@ body {
 .preview-pane {
     align-items: center;
     justify-content: center;
+}
+.editor-pane {
+    min-height: 600px;
 }
 
 /* ── Utilities ─────────────────────────────────────────────────────────────── */
