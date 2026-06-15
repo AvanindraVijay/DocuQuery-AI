@@ -15,38 +15,7 @@
 </p>
 
 ## System Architecture
-
-```mermaid
-graph TD
-    %% User Interaction
-    User([User / Browser]) -->|Uploads Document| UI
-    User -->|Queries / Compares| UI
-
-    %% Frontend
-    subgraph Frontend
-        UI[Glassmorphism UI<br/>Vanilla JS / CSS Grid]
-    end
-
-    %% Backend Services
-    subgraph Backend [FastAPI Backend]
-        UI -->|REST API Calls| API[FastAPI Routing]
-        
-        API -->|Extract| Ext[Extraction Service<br/>OCR & Parsers]
-        API -->|Analyze| DocSvc[Document Service]
-        
-        Ext -->|Raw Text| DocSvc
-    end
-
-    %% AI Models & Indexing
-    subgraph AI [Local AI Engine]
-        DocSvc -->|Create Embeddings| LlamaIdx[LlamaIndex]
-        
-        LlamaIdx -->|Vectorization| BGE[BAAI/bge-small-en<br/>Embedding Model]
-        LlamaIdx -->|Q&A Inference| LLM[Qwen2.5-1.5B<br/>Instruct LLM]
-        
-        LlamaIdx -->|Stores Nodes| InMemory[(In-Memory<br/>Vector Index)]
-    end
-```
+![DocuQuery AI - System Architecture](DocuQuery%20AI%20-%20System%20Architecture.png)
 
 ## Features
 
